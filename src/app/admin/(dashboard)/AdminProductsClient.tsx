@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useRef } from 'react';
+import { useState, useTransition, useRef, useEffect } from 'react';
 import { Plus, Pencil, Trash2, X, ImagePlus, PackageOpen, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { createProduct, updateProduct, deleteProduct } from '@/lib/adminActions';
@@ -30,6 +30,11 @@ export default function AdminProductsClient({ initialProducts }: Props) {
     const [isPending, startTransition] = useTransition();
     const [isLoadingImages, setIsLoadingImages] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
+
+    // Sincronizza lo stato locale quando le props cambiano (es. dopo router.refresh())
+    useEffect(() => {
+        setProducts(initialProducts);
+    }, [initialProducts]);
 
     // ---- helpers ----
     const openCreate = () => {
@@ -110,10 +115,6 @@ export default function AdminProductsClient({ initialProducts }: Props) {
                 }
                 closeModal();
                 router.refresh();
-                // Aggiorno state locale ottimisticamente
-                const res = await fetch('/api/admin/products');
-                if (res.ok) setProducts(await res.json());
-                else router.refresh();
             } catch {
                 toast.error('Errore durante il salvataggio. Riprova.');
             }

@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 import { SignJWT } from 'jose';
 import { db } from '@/lib/db';
 import { products, type NewProduct } from '@/lib/schema';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || 'chicchi3d-super-secret-jwt-key-2026'
@@ -44,7 +45,7 @@ export async function logoutAction() {
 
 // --- PRODUCTS CRUD ---
 export async function getProducts() {
-    return await db.select().from(products).orderBy(products.createdAt);
+    return await db.select().from(products).orderBy(desc(products.createdAt));
 }
 
 export async function getProductById(id: string) {
@@ -54,12 +55,15 @@ export async function getProductById(id: string) {
 
 export async function createProduct(data: NewProduct) {
     await db.insert(products).values(data);
+    revalidatePath('/admin');
 }
 
 export async function updateProduct(id: string, data: Partial<NewProduct>) {
     await db.update(products).set(data).where(eq(products.id, id));
+    revalidatePath('/admin');
 }
 
 export async function deleteProduct(id: string) {
     await db.delete(products).where(eq(products.id, id));
+    revalidatePath('/admin');
 }
