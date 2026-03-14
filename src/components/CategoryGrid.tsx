@@ -24,7 +24,7 @@ const CATEGORIES = [
     },
     {
         title: 'Biglietti 3D',
-        slug: 'categoria/auguri',
+        slug: 'categoria/biglietti-3d',
         colorClass: 'bg-pink-100 hover:bg-pink-200',
         icon: <Gift className="w-10 h-10 text-pink-500" />
     }
