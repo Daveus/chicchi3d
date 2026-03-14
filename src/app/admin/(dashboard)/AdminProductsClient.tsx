@@ -164,6 +164,7 @@ export default function AdminProductsClient({ initialProducts }: Props) {
                                 <th className="text-left text-slate-400 font-medium px-6 py-4">Nome</th>
                                 <th className="text-left text-slate-400 font-medium px-6 py-4">Categoria</th>
                                 <th className="text-left text-slate-400 font-medium px-6 py-4">Prezzo</th>
+                                <th className="text-center text-slate-400 font-medium px-6 py-4">Venduti</th>
                                 <th className="text-right text-slate-400 font-medium px-6 py-4">Azioni</th>
                             </tr>
                         </thead>
@@ -199,6 +200,11 @@ export default function AdminProductsClient({ initialProducts }: Props) {
                                         </td>
                                         <td className="px-6 py-3 text-white font-semibold">
                                             €{Number(p.price).toFixed(2)}
+                                        </td>
+                                        <td className="px-6 py-3 text-center">
+                                            <span className="text-white font-black bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
+                                                {p.numberSaled ?? 0}
+                                            </span>
                                         </td>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center justify-end gap-2">

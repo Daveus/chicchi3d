@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { SignJWT } from 'jose';
 import { db } from '@/lib/db';
 import { products, type NewProduct } from '@/lib/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -65,5 +65,12 @@ export async function updateProduct(id: string, data: Partial<NewProduct>) {
 
 export async function deleteProduct(id: string) {
     await db.delete(products).where(eq(products.id, id));
+    revalidatePath('/admin');
+}
+
+export async function incrementSales(id: string) {
+    await db.update(products)
+        .set({ numberSaled: sql`${products.numberSaled} + 1` })
+        .where(eq(products.id, id));
     revalidatePath('/admin');
 }

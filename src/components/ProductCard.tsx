@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ShoppingCart, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { incrementSales } from '@/lib/adminActions';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
     title: string;
@@ -51,10 +53,18 @@ export default function ProductCard({ title, price, category, id, descrizione_br
 
     const colorClass = getCategoryBgColor(category);
 
-    const handleAddToCart = (e: React.MouseEvent) => {
+    const handleAddToCart = async (e: React.MouseEvent) => {
         e.preventDefault();
-        console.log(`[Carrello] Prodotto aggiunto: ${title} (Ref: ${id}) - Prezzo: €${Number(price).toFixed(2)}`);
-        alert(`Aggiunto al carrello: ${title}`);
+        try {
+            await incrementSales(String(id));
+            toast.success(`Aggiunto al carrello! (Vendite incrementate)`, {
+                description: title
+            });
+            console.log(`[Vendite] Incrementata per: ${title} (${id})`);
+        } catch (error) {
+            console.error(error);
+            toast.error("Errore nell'incremento vendite");
+        }
     };
 
     return (
