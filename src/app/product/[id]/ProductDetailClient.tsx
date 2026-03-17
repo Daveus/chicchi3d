@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Heart, ChevronLeft, ChevronRight, Star, Share2, ArrowLeft, Check } from 'lucide-react';
+import { ShoppingCart, Heart, ChevronLeft, ChevronRight, Share2, ArrowLeft, Check } from 'lucide-react';
 import { Product } from '@/lib/schema';
 import { incrementSales } from '@/lib/adminActions';
+import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -13,10 +14,21 @@ interface ProductDetailClientProps {
 }
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+    const { user, openLogin, isFavorite, toggleFavorite } = useAuth();
     const images = (product.images as string[]) || [];
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isLiked, setIsLiked] = useState(false);
+    const isFav = isFavorite(product.id);
     const [isAdding, setIsAdding] = useState(false);
+
+    const handleToggleFavorite = async () => {
+        if (!user) {
+            openLogin();
+            toast.info("Accedi per salvare i preferiti!");
+            return;
+        }
+
+        await toggleFavorite(product.id);
+    };
 
     const handleAddToCart = async () => {
         setIsAdding(true);
@@ -48,7 +60,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {/* Back Link */}
             <Link
                 href="/shop"
-                className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-8 group"
+                className="inline-flex items-center text-sm font-medium text-stone-600 hover:text-primary transition-colors mb-8 group"
             >
                 <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
                 Torna allo Shop
@@ -127,14 +139,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                             <span className="bg-primary/10 text-primary-dark text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest">
                                 {product.category}
                             </span>
-                            <div className="flex items-center text-accent ml-2">
-                                <Star className="w-4 h-4 fill-current" />
-                                <Star className="w-4 h-4 fill-current" />
-                                <Star className="w-4 h-4 fill-current" />
-                                <Star className="w-4 h-4 fill-current" />
-                                <Star className="w-4 h-4 fill-current" />
-                                <span className="text-gray-400 text-xs font-bold ml-1.5">(5.0)</span>
-                            </div>
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight mb-4">
@@ -148,25 +152,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
                     <div className="space-y-6 mb-8 flex-grow">
                         <div className="bg-surface rounded-3xl p-6 border border-gray-100">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Descrizione</h3>
+                            <h3 className="text-sm font-bold text-stone-500 uppercase tracking-widest mb-3">Descrizione</h3>
                             <p className="text-gray-600 leading-relaxed">
                                 {product.description || "Nessuna descrizione disponibile per questo prodotto."}
                             </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
-                                    <Check className="w-5 h-5" />
-                                </div>
-                                <span className="text-xs font-bold text-gray-500 uppercase">Spedizione Gratis</span>
-                            </div>
-                            <div className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-                                    <Check className="w-5 h-5" />
-                                </div>
-                                <span className="text-xs font-bold text-gray-500 uppercase">Eco-Friendly</span>
-                            </div>
                         </div>
                     </div>
 
@@ -177,8 +166,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                                 onClick={handleAddToCart}
                                 disabled={isAdding}
                                 className={`flex-1 relative h-16 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 active:scale-[0.98] ${isAdding
-                                        ? 'bg-secondary text-white'
-                                        : 'bg-primary text-foreground hover:shadow-lg hover:shadow-primary/20'
+                                    ? 'bg-secondary text-white'
+                                    : 'bg-primary text-foreground hover:shadow-lg hover:shadow-primary/20'
                                     }`}
                             >
                                 {isAdding ? (
@@ -192,20 +181,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                             </button>
 
                             <button
-                                onClick={() => {
-                                    setIsLiked(!isLiked);
-                                    if (!isLiked) toast.success("Aggiunto ai preferiti!");
-                                }}
-                                className={`w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all active:scale-[0.95] ${isLiked
-                                        ? 'bg-red-50 border-red-200 text-red-500'
-                                        : 'border-gray-200 text-gray-400 hover:border-gray-300'
+                                onClick={handleToggleFavorite}
+                                className={`w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all active:scale-[0.95] ${isFav
+                                    ? 'bg-red-50 border-red-200 text-red-500'
+                                    : 'border-gray-200 text-stone-500 hover:border-gray-300'
                                     }`}
                             >
-                                <Heart className={`w-7 h-7 ${isLiked ? 'fill-current' : ''}`} />
+                                <Heart className={`w-7 h-7 ${isFav ? 'fill-current' : ''}`} />
                             </button>
                         </div>
 
-                        <button className="w-full h-12 rounded-xl flex items-center justify-center gap-2 text-gray-400 font-bold hover:text-foreground hover:bg-surface-hover transition-all">
+                        <button className="w-full h-12 rounded-xl flex items-center justify-center gap-2 text-stone-500 font-bold hover:text-foreground hover:bg-surface-hover transition-all">
                             <Share2 className="w-4 h-4" />
                             Condividi con un amico
                         </button>

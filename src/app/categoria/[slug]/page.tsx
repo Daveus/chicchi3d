@@ -56,10 +56,10 @@ async function CategoryProductsList({ categoryName }: { categoryName: string }) 
         return (
             <div className="py-20 text-center">
                 <div className="bg-surface inline-block p-6 rounded-full mb-4">
-                    <PackageOpen className="w-12 h-12 text-gray-300 mx-auto" />
+                    <PackageOpen className="w-12 h-12 text-stone-400 mx-auto" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">Nessun prodotto disponibile</h3>
-                <p className="text-gray-500 mt-2">Stiamo lavorando per aggiungere nuove creazioni in questa categoria!</p>
+                <p className="text-stone-600 mt-2">Stiamo lavorando per aggiungere nuove creazioni in questa categoria!</p>
                 <Link href="/shop" className="mt-6 inline-block text-primary font-bold hover:underline">
                     Esplora tutto lo shop
                 </Link>
@@ -99,7 +99,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 {/* Breadcrumb & Header */}
                 <div className="mb-12 border-b border-gray-100 pb-8 text-center md:text-left flex flex-col md:flex-row md:items-end md:justify-between">
                     <div>
-                        <nav className="text-sm text-gray-400 mb-4 font-medium flex justify-center md:justify-start space-x-2">
+                        <nav className="text-sm text-stone-500 mb-4 font-medium flex justify-center md:justify-start space-x-2">
                             <Link href="/" className="hover:text-primary transition-soft">Home</Link>
                             <span>/</span>
                             <Link href="/shop" className="hover:text-primary transition-soft">Shop</Link>
@@ -114,7 +114,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                                 {categoryInfo.nome}
                             </h1>
                         </div>
-                        <p className="text-lg text-gray-500 max-w-2xl">{categoryInfo.desc}</p>
+                        <p className="text-lg text-stone-600 max-w-2xl">{categoryInfo.desc}</p>
                     </div>
                 </div>
 

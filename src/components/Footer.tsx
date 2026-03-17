@@ -10,7 +10,7 @@ export default function Footer() {
                         <Link href="/" className="text-2xl font-black tracking-tighter text-foreground">
                             Chicchi <span className="text-primary">3D</span>
                         </Link>
-                        <p className="text-gray-500 text-sm leading-relaxed">
+                        <p className="text-stone-600 text-sm leading-relaxed">
                             Diamo forma alle tue idee con stampe 3D personalizzate. Giocose, colorate, uniche! Made in Italy con ❤️.
                         </p>
                     </div>
@@ -18,27 +18,27 @@ export default function Footer() {
                     <div>
                         <h3 className="font-bold text-lg mb-4 text-foreground">Esplora</h3>
                         <ul className="space-y-3">
-                            <li><Link href="/shop" className="text-gray-500 hover:text-primary transition-soft">Tutti i prodotti</Link></li>
-                            <li><Link href="/categoria/contenitori" className="text-gray-500 hover:text-primary transition-soft">Contenitori</Link></li>
-                            <li><Link href="/categoria/vignette" className="text-gray-500 hover:text-primary transition-soft">Vignette</Link></li>
-                            <li><Link href="/categoria/lampade" className="text-gray-500 hover:text-primary transition-soft">Lampade</Link></li>
-                            <li><Link href="/categoria/auguri" className="text-gray-500 hover:text-primary transition-soft">Biglietti 3D</Link></li>
+                            <li><Link href="/shop" className="text-stone-600 hover:text-primary transition-soft">Tutti i prodotti</Link></li>
+                            <li><Link href="/categoria/contenitori" className="text-stone-600 hover:text-primary transition-soft">Contenitori</Link></li>
+                            <li><Link href="/categoria/vignette" className="text-stone-600 hover:text-primary transition-soft">Vignette</Link></li>
+                            <li><Link href="/categoria/lampade" className="text-stone-600 hover:text-primary transition-soft">Lampade</Link></li>
+                            <li><Link href="/categoria/auguri" className="text-stone-600 hover:text-primary transition-soft">Biglietti 3D</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="font-bold text-lg mb-4 text-foreground">Supporto</h3>
                         <ul className="space-y-3">
-                            <li><Link href="/faq" className="text-gray-500 hover:text-primary transition-soft">FAQ</Link></li>
-                            <li><Link href="/spedizioni" className="text-gray-500 hover:text-primary transition-soft">Spedizioni & Resi</Link></li>
-                            <li><Link href="/contatti" className="text-gray-500 hover:text-primary transition-soft">Contattaci</Link></li>
-                            <li><Link href="/privacy" className="text-gray-500 hover:text-primary transition-soft">Privacy Policy</Link></li>
+                            <li><Link href="/faq" className="text-stone-600 hover:text-primary transition-soft">FAQ</Link></li>
+                            <li><Link href="/spedizioni" className="text-stone-600 hover:text-primary transition-soft">Spedizioni & Resi</Link></li>
+                            <li><Link href="/contatti" className="text-stone-600 hover:text-primary transition-soft">Contattaci</Link></li>
+                            <li><Link href="/privacy" className="text-stone-600 hover:text-primary transition-soft">Privacy Policy</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="font-bold text-lg mb-4 text-foreground">Iscriviti al Club!</h3>
-                        <p className="text-gray-500 text-sm mb-4">Ricevi sconti zuccherati e novità pazzesche.</p>
+                        <p className="text-stone-600 text-sm mb-4">Ricevi sconti zuccherati e novità pazzesche.</p>
                         <form className="flex flex-col space-y-2">
                             <input
                                 type="email"
@@ -56,7 +56,7 @@ export default function Footer() {
 
                 </div>
 
-                <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-gray-500">
+                <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-stone-600">
                     <p>© {new Date().getFullYear()} Chicchi 3D. Tutti i diritti riservati.</p>
                     <div className="flex space-x-6">
                         {/* Social Icons Placeholder */}

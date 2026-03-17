@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PackageOpen, LogOut, LayoutDashboard } from 'lucide-react';
+import { PackageOpen, LogOut, LayoutDashboard, Users, ShoppingBag } from 'lucide-react';
 import { logoutAction } from '@/lib/adminActions';
 
 export default function AdminSidebar() {
@@ -10,6 +10,8 @@ export default function AdminSidebar() {
 
     const links = [
         { href: '/admin', icon: LayoutDashboard, label: 'Prodotti' },
+        { href: '/admin/orders', icon: ShoppingBag, label: 'Gestione Ordini' },
+        { href: '/admin/users', icon: Users, label: 'Utenti Registrati' },
     ];
 
     return (

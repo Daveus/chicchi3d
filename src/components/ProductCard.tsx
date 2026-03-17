@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ShoppingCart, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { incrementSales } from '@/lib/adminActions';
+import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -14,9 +15,13 @@ interface ProductCardProps {
     id: string | number;
     descrizione_breve?: string;
     images?: string[] | any;
+    isFavoriteInitially?: boolean;
 }
 
-export default function ProductCard({ title, price, category, id, descrizione_breve, images }: ProductCardProps) {
+export default function ProductCard({ title, price, category, id, descrizione_breve, images, isFavoriteInitially = false }: ProductCardProps) {
+    const { user, openLogin, isFavorite, toggleFavorite } = useAuth();
+    const { addItem } = useCart();
+    const isFav = isFavorite(String(id));
     const [isHovered, setIsHovered] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -53,18 +58,31 @@ export default function ProductCard({ title, price, category, id, descrizione_br
 
     const colorClass = getCategoryBgColor(category);
 
-    const handleAddToCart = async (e: React.MouseEvent) => {
+    const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault();
-        try {
-            await incrementSales(String(id));
-            toast.success(`Aggiunto al carrello! (Vendite incrementate)`, {
-                description: title
-            });
-            console.log(`[Vendite] Incrementata per: ${title} (${id})`);
-        } catch (error) {
-            console.error(error);
-            toast.error("Errore nell'incremento vendite");
+        e.stopPropagation();
+
+        if (!user) {
+            openLogin();
+            toast.info("Accedi per salvare i preferiti!");
+            return;
         }
+
+        await toggleFavorite(String(id));
+    };
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addItem({
+            id: String(id),
+            name: title,
+            price: Number(price),
+            image: productImages[0] ?? undefined,
+        });
+        toast.success('Aggiunto al carrello!', {
+            description: title,
+        });
     };
 
     return (
@@ -141,8 +159,12 @@ export default function ProductCard({ title, price, category, id, descrizione_br
 
                 {/* Quick Actions */}
                 <div className={`absolute top-4 right-4 flex flex-col space-y-2 transition-all duration-300 z-20 ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
-                    <button className="bg-white p-2 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-soft active:scale-90">
-                        <Heart className="w-5 h-5" />
+                    <button
+                        onClick={handleToggleFavorite}
+                        className={`p-2 rounded-full shadow-md transition-all active:scale-90 ${isFav ? 'bg-primary text-foreground' : 'bg-white text-stone-500 hover:text-red-500'
+                            }`}
+                    >
+                        <Heart className={`w-5 h-5 ${isFav ? 'fill-current' : ''}`} />
                     </button>
                 </div>
 
@@ -156,12 +178,12 @@ export default function ProductCard({ title, price, category, id, descrizione_br
 
             {/* Info Container */}
             <div className="p-5 flex flex-col flex-grow bg-white">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{category}</span>
+                <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">{category}</span>
                 <Link href={`/product/${id}`} className="text-lg font-bold text-foreground hover:text-primary transition-soft line-clamp-1">
                     {title}
                 </Link>
                 {descrizione_breve && (
-                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 flex-grow">
+                    <p className="text-sm text-stone-600 mt-2 line-clamp-2 flex-grow">
                         {descrizione_breve}
                     </p>
                 )}

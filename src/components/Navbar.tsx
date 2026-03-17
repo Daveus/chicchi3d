@@ -2,11 +2,49 @@
 
 import Link from 'next/link';
 import { ShoppingCart, User, Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SearchBar from '@/components/SearchBar';
+import AccountDropdown from '@/components/AccountDropdown';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems, openCart } = useCart();
+  const prevTotalRef = useRef(totalItems);
+  const [badgeBump, setBadgeBump] = useState(false);
+
+  // Animazione bump quando viene aggiunto un articolo
+  useEffect(() => {
+    if (totalItems > prevTotalRef.current) {
+      setBadgeBump(true);
+      setTimeout(() => setBadgeBump(false), 400);
+    }
+    prevTotalRef.current = totalItems;
+  }, [totalItems]);
+
+  const CartButton = ({ mobile = false }: { mobile?: boolean }) => (
+    <button
+      onClick={openCart}
+      className={`text-foreground hover:text-primary transition-soft relative p-1 ${mobile ? '' : ''}`}
+    >
+      <ShoppingCart className="w-6 h-6" />
+      <AnimatePresence>
+        {totalItems > 0 && (
+          <motion.span
+            key="badge"
+            initial={{ scale: 0 }}
+            animate={{ scale: badgeBump ? 1.4 : 1 }}
+            exit={{ scale: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+            className="absolute top-0 right-0 bg-primary-dark text-foreground text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center translate-x-1 -translate-y-1 leading-none"
+          >
+            {totalItems > 9 ? '9+' : totalItems}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
+  );
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-surface-hover">
@@ -26,30 +64,19 @@ export default function Navbar() {
             <Link href="/categoria/vignette" className="text-foreground/80 hover:text-primary transition-soft font-medium">Vignette</Link>
             <Link href="/categoria/lampade" className="text-foreground/80 hover:text-primary transition-soft font-medium">Lampade</Link>
             <Link href="/categoria/biglietti-3d" className="text-foreground/80 hover:text-primary transition-soft font-medium">Biglietti 3D</Link>
+            <Link href="/crea-su-misura" className="bg-primary/10 text-primary hover:bg-primary/20 transition-all px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest">Crea su Misura</Link>
           </div>
 
           {/* Right section: Search & Icons */}
           <div className="hidden md:flex items-center space-x-6">
             <SearchBar />
-            <button className="text-foreground hover:text-primary transition-soft relative p-1">
-              <User className="w-6 h-6" />
-            </button>
-            <button className="text-foreground hover:text-primary transition-soft relative p-1">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute top-0 right-0 bg-accent text-foreground text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center translate-x-1 -translate-y-1">
-                2
-              </span>
-            </button>
+            <AccountDropdown />
+            <CartButton />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-4">
-            <button className="text-foreground relative p-1">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute top-0 right-0 bg-accent text-foreground text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center translate-x-1 -translate-y-1">
-                2
-              </span>
-            </button>
+            <CartButton mobile />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-foreground hover:text-primary transition-soft p-1"
@@ -69,8 +96,9 @@ export default function Navbar() {
             <Link href="/categoria/vignette" className="text-lg font-medium text-foreground hover:text-primary">Vignette</Link>
             <Link href="/categoria/lampade" className="text-lg font-medium text-foreground hover:text-primary">Lampade</Link>
             <Link href="/categoria/biglietti-3d" className="text-lg font-medium text-foreground hover:text-primary">Biglietti 3D</Link>
+            <Link href="/crea-su-misura" className="text-lg font-black text-primary hover:text-primary-dark">Crea su Misura</Link>
             <div className="h-px bg-gray-100 my-2"></div>
-            <Link href="/profile" className="flex items-center space-x-2 text-lg font-medium text-foreground hover:text-primary">
+            <Link href="/account" className="flex items-center space-x-2 text-lg font-medium text-foreground hover:text-primary">
               <User className="w-5 h-5" />
               <span>Il mio Account</span>
             </Link>

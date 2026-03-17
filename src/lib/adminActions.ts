@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SignJWT } from 'jose';
 import { db } from '@/lib/db';
-import { products, type NewProduct } from '@/lib/schema';
+import { products, users, orders, type NewProduct } from '@/lib/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -73,4 +73,57 @@ export async function incrementSales(id: string) {
         .set({ numberSaled: sql`${products.numberSaled} + 1` })
         .where(eq(products.id, id));
     revalidatePath('/admin');
+}
+
+// --- USERS CRUD (Admin) ---
+export async function getAllUsers() {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+}
+
+// --- ORDERS CRUD (Admin) ---
+export async function getAllOrders() {
+    // Esegue una left join con users per estrarre nome/cognome di chi ha effettuato l'ordine
+    return await db.select({
+        order: orders,
+        user: {
+            id: users.id,
+            nome: users.nome,
+            cognome: users.cognome,
+            email: users.email
+        }
+    })
+    .from(orders)
+    .leftJoin(users, eq(orders.userId, users.id))
+    .orderBy(desc(orders.dataOrdine));
+}
+
+export async function getOrderById(id: string) {
+    const result = await db.select({
+        order: orders,
+        user: {
+            id: users.id,
+            nome: users.nome,
+            cognome: users.cognome,
+            email: users.email
+        }
+    })
+    .from(orders)
+    .leftJoin(users, eq(orders.userId, users.id))
+    .where(eq(orders.id, id))
+    .limit(1);
+
+    return result[0] ?? null;
+}
+
+export async function updateOrderStatus(id: string, newStatus: string) {
+    await db.update(orders)
+        .set({ stato: newStatus })
+        .where(eq(orders.id, id));
+    
+    // Invalida sia la cache admin che la cache cliente
+    revalidatePath('/admin/orders');
+    revalidatePath('/admin/orders/[id]', 'page');
+    revalidatePath('/account');
+    
+    return { success: true };
 }

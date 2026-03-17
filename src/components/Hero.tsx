@@ -35,7 +35,7 @@ export default function Hero() {
                             </span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-gray-500 max-w-lg leading-relaxed">
+                        <p className="text-lg md:text-xl text-stone-600 max-w-lg leading-relaxed">
                             Design unici, stampati in 3D con amore e materiali ecosostenibili. Scopri la magia della nostra collezione per rendere ogni angolo più colorato!
                         </p>
 
@@ -48,7 +48,7 @@ export default function Hero() {
                                 <ArrowRight className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/personalizza"
+                                href="/crea-su-misura"
                                 className="bg-white text-foreground border border-gray-100 font-bold text-lg px-8 py-4 rounded-2xl hover:bg-surface-hover hover:-translate-y-1 transition-all flex items-center justify-center active:scale-95"
                             >
                                 Crea su misura

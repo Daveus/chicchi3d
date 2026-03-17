@@ -149,7 +149,7 @@ export default function SearchBar() {
                     {query.length > 0 ? (
                         <button
                             onClick={handleClear}
-                            className="text-gray-400 hover:text-foreground transition-soft"
+                            className="text-stone-500 hover:text-foreground transition-soft"
                             aria-label="Cancella ricerca"
                         >
                             <X className="w-4 h-4" />
@@ -157,7 +157,7 @@ export default function SearchBar() {
                     ) : (
                         isLoading
                             ? <div className="w-4 h-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin" />
-                            : <Search className="w-4 h-4 text-gray-400 group-focus-within:text-primary transition-soft" />
+                            : <Search className="w-4 h-4 text-stone-500 group-focus-within:text-primary transition-soft" />
                     )}
                 </div>
             </div>
@@ -174,8 +174,8 @@ export default function SearchBar() {
                     {results.length === 0 && !isLoading ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center px-4">
                             <ShoppingBag className="w-10 h-10 text-gray-200 mb-3" />
-                            <p className="text-sm font-semibold text-gray-400">Nessun prodotto trovato</p>
-                            <p className="text-xs text-gray-300 mt-1">Prova con un termine diverso</p>
+                            <p className="text-sm font-semibold text-stone-500">Nessun prodotto trovato</p>
+                            <p className="text-xs text-stone-400 mt-1">Prova con un termine diverso</p>
                         </div>
                     ) : (
                         <ul className="divide-y divide-gray-50">
@@ -195,7 +195,7 @@ export default function SearchBar() {
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-300">
+                                                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-stone-400">
                                                     {product.name.slice(0, 2).toUpperCase()}
                                                 </div>
                                             )}
@@ -204,7 +204,7 @@ export default function SearchBar() {
                                         {/* Info */}
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-bold text-foreground truncate">{product.name}</p>
-                                            <p className="text-xs text-gray-400">{product.category}</p>
+                                            <p className="text-xs text-stone-500">{product.category}</p>
                                         </div>
 
                                         {/* Prezzo */}
@@ -227,7 +227,7 @@ export default function SearchBar() {
                             )}
 
                             {!hasMore && results.length > 0 && (
-                                <li className="px-4 py-2 text-center text-xs text-gray-300">
+                                <li className="px-4 py-2 text-center text-xs text-stone-400">
                                     Tutti i risultati visualizzati
                                 </li>
                             )}

@@ -29,7 +29,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
 
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight mb-4">Lo Shop</h1>
-                    <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                    <p className="text-lg text-stone-600 max-w-2xl mx-auto">
                         Scopri tutte le nostre creazioni stampate in 3D. Divertenti, colorate e perfette per te o come regalo!
                     </p>
                 </div>
@@ -42,7 +42,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
                             onClick={() => setActiveCategory(cat.name)}
                             className={`flex items-center px-6 py-3 rounded-full font-bold transition-soft ${activeCategory === cat.name
                                 ? 'bg-foreground text-background shadow-md'
-                                : 'bg-surface-hover text-gray-500 hover:bg-gray-200'
+                                : 'bg-surface-hover text-stone-600 hover:bg-gray-200'
                                 }`}
                         >
                             {cat.icon}
@@ -52,7 +52,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
                 </div>
 
                 <div className="flex justify-between items-center mb-6">
-                    <span className="text-gray-500 font-medium tracking-tight">
+                    <span className="text-stone-600 font-medium tracking-tight">
                         Trovati <span className="text-foreground font-black">{filteredProducts.length}</span> prodotti
                     </span>
                 </div>
@@ -78,7 +78,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
                             <PackageOpen className="w-16 h-16 text-gray-200" />
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Ancora nulla qui...</h3>
-                        <p className="text-gray-500 mt-2">Stiamo rifornendo lo shop. Torna a trovarci presto!</p>
+                        <p className="text-stone-600 mt-2">Stiamo rifornendo lo shop. Torna a trovarci presto!</p>
                     </div>
                 )}
             </div>
