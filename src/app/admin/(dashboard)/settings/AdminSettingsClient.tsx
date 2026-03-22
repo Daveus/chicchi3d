@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { changeAdminUsername, changeAdminPassword } from '@/lib/adminActions';
 import { User, Lock, ShieldCheck } from 'lucide-react';
 
@@ -11,12 +12,19 @@ const initialState: ActionState = { error: '', success: '' };
 
 // ─── Cambio Username Form ────────────────────────────────────────────────────
 function ChangeUsernameForm({ currentUsername }: { currentUsername: string }) {
+    const router = useRouter();
     const [state, formAction, isPending] = useActionState(changeAdminUsername, initialState);
 
     useEffect(() => {
-        if (state.error) toast.error(state.error);
-        if (state.success) toast.success(state.success);
-    }, [state]);
+        if (state.error) {
+            toast.error(state.error);
+        }
+        if (state.success) {
+            toast.success(state.success, { duration: 3000 });
+            // Redirect al login dopo 2 secondi (cookie già eliminato dal server)
+            setTimeout(() => router.push('/admin/login'), 2000);
+        }
+    }, [state, router]);
 
     return (
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -74,12 +82,19 @@ function ChangeUsernameForm({ currentUsername }: { currentUsername: string }) {
 
 // ─── Cambio Password Form ────────────────────────────────────────────────────
 function ChangePasswordForm() {
+    const router = useRouter();
     const [state, formAction, isPending] = useActionState(changeAdminPassword, initialState);
 
     useEffect(() => {
-        if (state.error) toast.error(state.error);
-        if (state.success) toast.success(state.success);
-    }, [state]);
+        if (state.error) {
+            toast.error(state.error);
+        }
+        if (state.success) {
+            toast.success(state.success, { duration: 3000 });
+            // Redirect al login dopo 2 secondi (cookie già eliminato dal server)
+            setTimeout(() => router.push('/admin/login'), 2000);
+        }
+    }, [state, router]);
 
     return (
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">

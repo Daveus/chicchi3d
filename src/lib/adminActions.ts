@@ -92,11 +92,11 @@ export async function changeAdminUsername(
         .set({ username: newUsername, updatedAt: new Date() })
         .where(eq(adminSettings.id, record.id));
 
-    // Forza logout per sicurezza
+    // Invalida il cookie lato server
     const cookieStore = await cookies();
     cookieStore.delete('admin-token');
 
-    redirect('/admin/login');
+    return { error: '', success: 'Username aggiornato. Effettua nuovamente il login.' };
 }
 
 export async function changeAdminPassword(
@@ -133,11 +133,11 @@ export async function changeAdminPassword(
         .set({ passwordHash: newHash, updatedAt: new Date() })
         .where(eq(adminSettings.id, record.id));
 
-    // Forza logout per sicurezza
+    // Invalida il cookie lato server
     const cookieStore = await cookies();
     cookieStore.delete('admin-token');
 
-    redirect('/admin/login');
+    return { error: '', success: 'Password aggiornata. Effettua nuovamente il login.' };
 }
 
 // --- PRODUCTS CRUD ---
