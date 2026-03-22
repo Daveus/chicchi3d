@@ -38,6 +38,7 @@ export async function loginAction(prevState: { error: string }, formData: FormDa
     const [adminRecord] = await db
         .select()
         .from(adminSettings)
+        .where(eq(adminSettings.username, username))
         .limit(1);
 
     const isValid =
