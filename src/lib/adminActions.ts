@@ -13,12 +13,17 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || 'chicchi3d-super-secret-jwt-key-2026'
 );
 
+// Blacklist di password troppo deboli
+const WEAK_PASSWORDS = ['admin', 'password', '123456', '12345678', 'qwerty', 'pass', 'admin123'];
+
 // --- SEED ADMIN (lazy init) ---
 async function ensureAdminSettingsSeeded() {
     const existing = await db.select().from(adminSettings).limit(1);
     if (existing.length === 0) {
-        const passwordHash = await bcrypt.hash('admin', 10);
-        await db.insert(adminSettings).values({ username: 'admin', passwordHash });
+        const initUsername = process.env.ADMIN_USERNAME || 'admin';
+        const initPassword = process.env.ADMIN_PASSWORD || 'chicchi3d-admin-2026';
+        const passwordHash = await bcrypt.hash(initPassword, 10);
+        await db.insert(adminSettings).values({ username: initUsername, passwordHash });
     }
 }
 
@@ -111,8 +116,12 @@ export async function changeAdminPassword(
         return { error: 'Tutti i campi sono obbligatori.', success: '' };
     }
 
-    if (newPassword.length < 6) {
-        return { error: 'La nuova password deve avere almeno 6 caratteri.', success: '' };
+    if (newPassword.length < 8) {
+        return { error: 'La nuova password deve avere almeno 8 caratteri.', success: '' };
+    }
+
+    if (WEAK_PASSWORDS.includes(newPassword.toLowerCase())) {
+        return { error: '⚠️ Password troppo debole e compromessa. Scegli una password più sicura.', success: '' };
     }
 
     if (newPassword !== confirmPassword) {

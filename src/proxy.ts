@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET || 'chicchi3d-user-secret-jwt-key-2026'
+    process.env.JWT_SECRET || 'chicchi3d-super-secret-jwt-key-2026'
 );
 
 export async function proxy(request: NextRequest) {
