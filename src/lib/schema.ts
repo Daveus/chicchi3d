@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, numeric, text, jsonb, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, numeric, text, jsonb, timestamp, integer, serial } from 'drizzle-orm/pg-core';
 
 // --- PRODUCTS ---
 export const products = pgTable('products', {
@@ -68,3 +68,13 @@ export const customOrders = pgTable('custom_orders', {
 });
 
 export type CustomOrder = typeof customOrders.$inferSelect;
+
+// --- ADMIN SETTINGS ---
+export const adminSettings = pgTable('admin_settings', {
+    id: serial('id').primaryKey(),
+    username: varchar('username', { length: 100 }).notNull().default('admin'),
+    passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export type AdminSettings = typeof adminSettings.$inferSelect;
