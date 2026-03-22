@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SignJWT } from 'jose';
+import { SignJWT, jwtVerify } from 'jose';
 import { db } from '@/lib/db';
 import { products, users, orders, adminSettings, type NewProduct } from '@/lib/schema';
 import { eq, desc, sql } from 'drizzle-orm';
@@ -50,7 +50,10 @@ export async function loginAction(prevState: { error: string }, formData: FormDa
         return { error: 'Credenziali non valide. Riprova.' };
     }
 
-    const token = await new SignJWT({ role: 'admin' })
+    const token = await new SignJWT({
+        id: adminRecord.id,
+        role: 'admin'
+    })
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime('8h')
         .sign(JWT_SECRET);
@@ -73,10 +76,27 @@ export async function logoutAction() {
     redirect('/admin/login');
 }
 
+// --- HELPER: Estrazione ID dall'admin-token ---
+async function getAdminId() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin-token')?.value;
+    if (!token) return null;
+
+    try {
+        const { payload } = await jwtVerify(token, JWT_SECRET);
+        return payload.id as number;
+    } catch {
+        return null;
+    }
+}
+
 // --- ADMIN SETTINGS ---
 export async function getAdminSettings() {
     await ensureAdminSettingsSeeded();
-    const [record] = await db.select().from(adminSettings).limit(1);
+    const adminId = await getAdminId();
+    if (!adminId) return null;
+
+    const [record] = await db.select().from(adminSettings).where(eq(adminSettings.id, adminId)).limit(1);
     return record ?? null;
 }
 
@@ -84,19 +104,19 @@ export async function changeAdminUsername(
     prevState: { error: string; success: string },
     formData: FormData
 ) {
+    const adminId = await getAdminId();
+    if (!adminId) return { error: 'Sessione non valida o scaduta.', success: '' };
+
     const newUsername = (formData.get('newUsername') as string)?.trim();
 
     if (!newUsername || newUsername.length < 3) {
         return { error: "L'username deve avere almeno 3 caratteri.", success: '' };
     }
 
-    const [record] = await db.select().from(adminSettings).limit(1);
-    if (!record) return { error: 'Record admin non trovato.', success: '' };
-
     await db
         .update(adminSettings)
         .set({ username: newUsername, updatedAt: new Date() })
-        .where(eq(adminSettings.id, record.id));
+        .where(eq(adminSettings.id, adminId));
 
     // Invalida il cookie lato server
     const cookieStore = await cookies();
@@ -109,6 +129,9 @@ export async function changeAdminPassword(
     prevState: { error: string; success: string },
     formData: FormData
 ) {
+    const adminId = await getAdminId();
+    if (!adminId) return { error: 'Sessione non valida o scaduta.', success: '' };
+
     const oldPassword = formData.get('oldPassword') as string;
     const newPassword = (formData.get('newPassword') as string)?.trim();
     const confirmPassword = formData.get('confirmPassword') as string;
@@ -129,7 +152,7 @@ export async function changeAdminPassword(
         return { error: 'Le password non coincidono.', success: '' };
     }
 
-    const [record] = await db.select().from(adminSettings).limit(1);
+    const [record] = await db.select().from(adminSettings).where(eq(adminSettings.id, adminId)).limit(1);
     if (!record) return { error: 'Record admin non trovato.', success: '' };
 
     const isOldValid = await bcrypt.compare(oldPassword, record.passwordHash);
@@ -141,7 +164,7 @@ export async function changeAdminPassword(
     await db
         .update(adminSettings)
         .set({ passwordHash: newHash, updatedAt: new Date() })
-        .where(eq(adminSettings.id, record.id));
+        .where(eq(adminSettings.id, adminId));
 
     // Invalida il cookie lato server
     const cookieStore = await cookies();
